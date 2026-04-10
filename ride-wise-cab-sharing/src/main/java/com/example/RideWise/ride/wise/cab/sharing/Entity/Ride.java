@@ -23,9 +23,17 @@ public class Ride {
     private Rider rider;
 
     @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "latitude", column = @Column(name = "pickup_lat")),
+            @AttributeOverride(name = "longitude", column = @Column(name = "pickup_lng"))
+    })
     private Location pickupLocation;
 
     @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "latitude", column = @Column(name = "dest_lat")),
+            @AttributeOverride(name = "longitude", column = @Column(name = "dest_lng"))
+    })
     private Location destinationLocation;
 
     @Transient
