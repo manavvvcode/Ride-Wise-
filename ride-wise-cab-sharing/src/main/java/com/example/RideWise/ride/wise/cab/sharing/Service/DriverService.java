@@ -22,16 +22,16 @@ public class DriverService {
     @Autowired
     private DriverRepository driverRepository;
 
-    public List<Driver> getAllRiders() {
+    public List<Driver> getAllDrivers() {
         return driverRepository.findAll();
     }
 
-    public Driver getRiderById(Long id) throws DriverNotFoundException {
+    public Driver getDriverById(Long id) throws DriverNotFoundException {
         return driverRepository.findById(id).orElseThrow(() -> new DriverNotFoundException("Rider with id " + id + " not found."));
     }
 
     @Transactional
-    public Driver createNewRider(Driver driver) throws DriverAlreadyExistsException {
+    public Driver createNewDriver(Driver driver) throws DriverAlreadyExistsException {
         if (!driverRepository.existsByEmail(driver.getEmail())) {
             driverRepository.save(driver);
         }
@@ -39,13 +39,14 @@ public class DriverService {
     }
 
     @Transactional
-    public DeletedEntity<?> deleteRider(Long id) throws DriverNotFoundException {
+    public DeletedEntity<?> deleteDriver(Long id) throws DriverNotFoundException {
         Optional<Driver> driverOptional = driverRepository.findById(id);
         if (driverOptional.isEmpty()) {
             throw new DriverNotFoundException("Driver with id " + id + " not found.");
         }
         driverRepository.deleteById(id);
         List<Driver> updatedDriverList = driverRepository.findAll();
+        //int x = Integer.parseInt("123");
         return new DeletedEntity<>("Driver deleted successfully", updatedDriverList);
     }
 }
