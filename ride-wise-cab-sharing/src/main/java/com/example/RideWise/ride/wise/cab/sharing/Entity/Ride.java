@@ -1,6 +1,7 @@
 package com.example.RideWise.ride.wise.cab.sharing.Entity;
 
 import com.example.RideWise.ride.wise.cab.sharing.Enum.RideStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
