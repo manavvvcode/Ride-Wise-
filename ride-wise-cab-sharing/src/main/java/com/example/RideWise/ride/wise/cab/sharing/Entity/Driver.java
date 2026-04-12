@@ -4,6 +4,7 @@ import com.example.RideWise.ride.wise.cab.sharing.Enum.VehicleType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.processing.Pattern;
@@ -14,6 +15,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Driver {
 
     @Id
@@ -34,13 +36,9 @@ public class Driver {
 
     private VehicleType vehicleType;
 
-    @Embedded
-    @Column(name = "rider_location")
-    private Location location;
-    
     @Column(name = "rides_completed")
     private int totalRidesCompleted;
 
-    @OneToMany(mappedBy = "driver")
-    private List<Ride> driver_rides;
+    @OneToOne
+    private User user;
 }

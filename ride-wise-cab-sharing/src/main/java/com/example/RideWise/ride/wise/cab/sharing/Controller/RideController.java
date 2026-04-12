@@ -17,27 +17,27 @@ import java.util.List;
 @RequestMapping(path = "/ride")
 public class RideController {
 
-    @Autowired
-    private RideService rideService;
-
-    @GetMapping
-    public ResponseEntity<List<Ride>> getAllRides(){
-        return ResponseEntity.status(200).body(rideService.getAllRides());
-    }
-
-    @GetMapping(path = "/{rideId}")
-    public ResponseEntity<Rider> getRiderById(@PathVariable(name = "rideId")Long id) throws RideNotFoundException {
-        return ResponseEntity.status(200).body(rideService.getRideById(id));
-    }
-
-    @PostMapping
-    public ResponseEntity<Ride> requestNewRide(@RequestBody RideDto ride) throws RideAlreadyExistsException {
-        return ResponseEntity.status(200).body(rideService.requestNewRide(ride));
-    }
-
-    @DeleteMapping(path = "/{riderId}")
-    public ResponseEntity<DeletedEntity<?>> deleteRider(@PathVariable(value = "riderId")Long id) throws RiderNotFoundException {
-        return ResponseEntity.status(200).body(riderService.deleteRider(id));
-    }
+//    @Autowired
+//    private RideService rideService;
+//
+//    @GetMapping
+//    public ResponseEntity<List<Ride>> getAllRides(){
+//        return ResponseEntity.status(200).body(rideService.getAllRides());
+//    }
+//
+//    @GetMapping(path = "/{rideId}")
+//    public ResponseEntity<Rider> getRiderById(@PathVariable(name = "rideId")Long id) throws RideNotFoundException {
+//        return ResponseEntity.status(200).body(rideService.getRideById(id));
+//    }
+//
+//    @PostMapping
+//    public ResponseEntity<Ride> requestNewRide(@RequestBody RideDto ride) throws RideAlreadyExistsException {
+//        return ResponseEntity.status(200).body(rideService.requestNewRide(ride));
+//    }
+//
+//    @DeleteMapping(path = "/{riderId}")
+//    public ResponseEntity<DeletedEntity<?>> deleteRider(@PathVariable(value = "riderId")Long id) throws RiderNotFoundException {
+//        return ResponseEntity.status(200).body(riderService.deleteRider(id));
+//    }
 
 }

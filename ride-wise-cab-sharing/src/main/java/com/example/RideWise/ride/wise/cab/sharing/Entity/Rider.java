@@ -1,21 +1,26 @@
 package com.example.RideWise.ride.wise.cab.sharing.Entity;
 
 import ch.qos.logback.core.joran.spi.NoAutoStart;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.util.Collection;
 import java.util.List;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(
-        name = "rider_tbl"
-)
+@Builder
 public class Rider {
 
     @Id
@@ -28,15 +33,6 @@ public class Rider {
     @Column(name = "last_name", length = 50)
     private String lastName;
 
-    @Column(unique = true)
-    @Email
-    private String email;
-
-    @Embedded
-    private Location location;
-
-    @OneToMany(mappedBy = "rider")
-    private List<Ride> rider_rides;
-
-
+    @OneToOne
+    private User user;
 }

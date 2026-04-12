@@ -28,11 +28,11 @@ public class RiderController {
     public ResponseEntity<Rider> getRiderById(@PathVariable(name = "riderId")Long id) throws RiderNotFoundException {
         return ResponseEntity.status(200).body(riderService.getRiderById(id));
     }
-
-    @PostMapping
-    public ResponseEntity<Rider> createNewRider(@RequestBody Rider rider) throws RiderAlreadyExistsException {
-        return ResponseEntity.status(200).body(riderService.createNewRider(rider));
-    }
+//     setting up auth config so no longer required now
+//    @PostMapping
+//    public ResponseEntity<Rider> createNewRider(@RequestBody Rider rider) throws RiderAlreadyExistsException {
+//        return ResponseEntity.status(200).body(riderService.createNewRider(rider));
+//    }
 
     @DeleteMapping(path = "/{riderId}")
     public ResponseEntity<DeletedEntity<?>> deleteRider(@PathVariable(value = "riderId")Long id) throws RiderNotFoundException {
