@@ -30,13 +30,13 @@ public class RiderService {
         return riderRepository.findById(id).orElseThrow(() -> new RiderNotFoundException("Rider with id " + id + " not found."));
     }
 
-    @Transactional
-    public Rider createNewRider(Rider rider) throws RiderAlreadyExistsException {
-        if (!riderRepository.existsByEmail(rider.getEmail())) {
-            riderRepository.save(rider);
-        }
-        throw new RiderAlreadyExistsException("Rider already exists!");
-    }
+//    @Transactional
+//    public Rider createNewRider(Rider rider) throws RiderAlreadyExistsException {
+//        if (!riderRepository.existsByEmail(rider.getEmail())) {
+//            riderRepository.save(rider);
+//        }
+//        throw new RiderAlreadyExistsException("Rider already exists!");
+//    }
 
     @Transactional
     public DeletedEntity<?> deleteRider(Long id) throws RiderNotFoundException {

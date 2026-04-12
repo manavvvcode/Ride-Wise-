@@ -30,13 +30,13 @@ public class DriverService {
         return driverRepository.findById(id).orElseThrow(() -> new DriverNotFoundException("Rider with id " + id + " not found."));
     }
 
-    @Transactional
-    public Driver createNewDriver(Driver driver) throws DriverAlreadyExistsException {
-        if (!driverRepository.existsByEmail(driver.getEmail())) {
-            driverRepository.save(driver);
-        }
-        throw new DriverAlreadyExistsException("Rider already exists!");
-    }
+//    @Transactional
+//    public Driver createNewDriver(Driver driver) throws DriverAlreadyExistsException {
+//        if (!driverRepository.existsByEmail(driver.getEmail())) {
+//            driverRepository.save(driver);
+//        }
+//        throw new DriverAlreadyExistsException("Rider already exists!");
+//    }
 
     @Transactional
     public DeletedEntity<?> deleteDriver(Long id) throws DriverNotFoundException {
