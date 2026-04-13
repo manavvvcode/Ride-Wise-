@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface RiderRepository extends JpaRepository<Rider,Long> {
-    boolean existsByEmail(@Email String email);
+    //boolean existsByEmail(@Email String email);
 
-    Optional<Rider> findByEmail(String email);
+    //Optional<Rider> findByEmail(String email);
 }

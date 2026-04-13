@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DriverRepository extends JpaRepository<Driver,Long> {
-    boolean existsByEmail(@Email String email);
+    //boolean existsByEmail(@Email String email);
     //boolean existsByEmail(@Email String email);
 }

@@ -31,10 +31,10 @@ public class DriverController {
         return ResponseEntity.ok(driverService.getDriverById(id));
     }
 
-    @PostMapping
-    public ResponseEntity<Driver> createNewRider(@RequestBody Driver driver) throws DriverAlreadyExistsException {
-        return ResponseEntity.status(200).body(driverService.createNewDriver(driver));
-    }
+//    @PostMapping
+//    public ResponseEntity<Driver> createNewRider(@RequestBody Driver driver) throws DriverAlreadyExistsException {
+//        return ResponseEntity.status(200).body(driverService.createNewDriver(driver));
+//    }
 
     @DeleteMapping(path = "/{driverId}")
     public ResponseEntity<DeletedEntity<?>> deleteRider(@PathVariable(value = "driverId") Long id) throws DriverNotFoundException {

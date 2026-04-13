@@ -2,9 +2,13 @@ package com.example.RideWise.ride.wise.cab.sharing.Security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -20,6 +24,7 @@ public class AuthConfig {
                         .requestMatchers("/rider/**").hasRole("RIDER")
                         .requestMatchers("/driver/**").hasRole("DRIVER")
                         .anyRequest().authenticated())
+                .userDetailsService()
                 .httpBasic(AbstractHttpConfigurer::disable) // ← add this
                 .formLogin(AbstractHttpConfigurer::disable);
         return http.build();
@@ -28,5 +33,10 @@ public class AuthConfig {
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager getAuthenticationManager(AuthenticationConfiguration config) throws AuthenticationException {
+        return config.getAuthenticationManager();
     }
 }

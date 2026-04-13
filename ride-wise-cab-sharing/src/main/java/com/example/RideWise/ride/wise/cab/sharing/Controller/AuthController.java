@@ -9,6 +9,7 @@ import com.example.RideWise.ride.wise.cab.sharing.Entity.Rider;
 import com.example.RideWise.ride.wise.cab.sharing.Exceptions.DriverAlreadyExistsException;
 import com.example.RideWise.ride.wise.cab.sharing.Exceptions.RiderAlreadyExistsException;
 import com.example.RideWise.ride.wise.cab.sharing.Exceptions.RiderNotFoundException;
+import com.example.RideWise.ride.wise.cab.sharing.Exceptions.UserNameNotFoundException;
 import com.example.RideWise.ride.wise.cab.sharing.Service.AuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class AuthController {
     }
 
     @PostMapping(path = "/login")
-    public ResponseEntity<LoginResponseDto> loginRider(@RequestBody LoginRequestDto riderLoginRequest) throws RiderNotFoundException {
-        return ResponseEntity.ok(authService.loginRider(riderLoginRequest));
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto riderLoginRequest) throws RiderNotFoundException, UserNameNotFoundException {
+        return ResponseEntity.ok(authService.login(riderLoginRequest));
     }
 }
