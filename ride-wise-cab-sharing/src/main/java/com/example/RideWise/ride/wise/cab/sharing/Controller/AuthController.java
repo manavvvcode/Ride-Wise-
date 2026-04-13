@@ -6,13 +6,11 @@ import com.example.RideWise.ride.wise.cab.sharing.Dto.LoginResponseDto;
 import com.example.RideWise.ride.wise.cab.sharing.Dto.RiderDto;
 import com.example.RideWise.ride.wise.cab.sharing.Entity.Driver;
 import com.example.RideWise.ride.wise.cab.sharing.Entity.Rider;
-import com.example.RideWise.ride.wise.cab.sharing.Exceptions.DriverAlreadyExistsException;
-import com.example.RideWise.ride.wise.cab.sharing.Exceptions.RiderAlreadyExistsException;
-import com.example.RideWise.ride.wise.cab.sharing.Exceptions.RiderNotFoundException;
-import com.example.RideWise.ride.wise.cab.sharing.Exceptions.UserNameNotFoundException;
+import com.example.RideWise.ride.wise.cab.sharing.Exceptions.*;
 import com.example.RideWise.ride.wise.cab.sharing.Service.AuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,7 +34,7 @@ public class AuthController {
     }
 
     @PostMapping(path = "/login")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto riderLoginRequest) throws RiderNotFoundException, UserNameNotFoundException {
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto riderLoginRequest) throws BadCredentialsException {
         return ResponseEntity.ok(authService.login(riderLoginRequest));
     }
 }

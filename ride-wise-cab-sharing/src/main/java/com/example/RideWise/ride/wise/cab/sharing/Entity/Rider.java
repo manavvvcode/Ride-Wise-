@@ -33,6 +33,7 @@ public class Rider {
     @Column(name = "last_name", length = 50)
     private String lastName;
 
+    @JsonIgnore
     @OneToOne
     private User user;
 }

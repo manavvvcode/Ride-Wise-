@@ -8,10 +8,7 @@ import com.example.RideWise.ride.wise.cab.sharing.Entity.Driver;
 import com.example.RideWise.ride.wise.cab.sharing.Entity.Rider;
 import com.example.RideWise.ride.wise.cab.sharing.Entity.User;
 import com.example.RideWise.ride.wise.cab.sharing.Enum.Role;
-import com.example.RideWise.ride.wise.cab.sharing.Exceptions.DriverAlreadyExistsException;
-import com.example.RideWise.ride.wise.cab.sharing.Exceptions.RiderAlreadyExistsException;
-import com.example.RideWise.ride.wise.cab.sharing.Exceptions.RiderNotFoundException;
-import com.example.RideWise.ride.wise.cab.sharing.Exceptions.UserNameNotFoundException;
+import com.example.RideWise.ride.wise.cab.sharing.Exceptions.*;
 import com.example.RideWise.ride.wise.cab.sharing.Repository.DriverRepository;
 import com.example.RideWise.ride.wise.cab.sharing.Repository.RiderRepository;
 import com.example.RideWise.ride.wise.cab.sharing.Repository.UserRepository;
@@ -19,6 +16,7 @@ import com.example.RideWise.ride.wise.cab.sharing.Security.JwtUtil;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -39,12 +37,13 @@ public class AuthService {
     private final RiderRepository riderRepository;
     private final DriverRepository driverRepository;
     private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
 
     @Transactional
     public Rider registerNewRider(RiderDto rider) throws RiderAlreadyExistsException {
         User Optionaluser = userRepository.findByEmail(rider.getEmail()).orElse(null);
         if (Optionaluser != null) {
-            throw new RiderAlreadyExistsException("you already have an existing account with gmail " + rider.getEmail());
+            throw new RiderAlreadyExistsException("you already have an existing account with email " + rider.getEmail() + " Kindly login using your registered email");
         }
         User user = User.builder()
                 .email(rider.getEmail())
@@ -63,23 +62,20 @@ public class AuthService {
 
 
     @Transactional
-    public LoginResponseDto login(LoginRequestDto riderLoginRequest) throws RiderNotFoundException, UserNameNotFoundException {
-        User optionalUser = userRepository.findByEmail(riderLoginRequest.getEmail()).orElse(null);
-        if (optionalUser == null) {
-            throw new RiderNotFoundException("you don't have an account, kindly register yourself!");
-        }
+    public LoginResponseDto login(LoginRequestDto loginRequest) throws BadCredentialsException {
         try {
-            Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(riderLoginRequest.getEmail(), riderLoginRequest.getPassword()));
+            Authentication auth = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getEmail(),
+                            loginRequest.getPassword()
+                    )
+            );
             User user = (User) auth.getPrincipal();
-            if (user != null) {
-                String token = JwtUtil.generateToken(user);
-                return new LoginResponseDto(token, user.getId());
-            }
-            throw new RuntimeException("sorry couldn't validate your identity!");
-        } catch (AuthenticationException e) {
-            throw new UserNameNotFoundException("invalid email");
+            String token = jwtUtil.generateToken(user);
+            return new LoginResponseDto(token, user.getId());
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException("Invalid email or password");
         }
-
     }
 
     public Driver registerNewDriver(DriverDto driver) throws DriverAlreadyExistsException {

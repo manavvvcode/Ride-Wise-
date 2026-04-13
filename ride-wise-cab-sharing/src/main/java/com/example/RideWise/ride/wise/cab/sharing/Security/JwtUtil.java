@@ -7,6 +7,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -17,13 +18,13 @@ import java.util.Date;
 public class JwtUtil {
 
     @Value("${jwt.secretKey}")
-    private static String jwtSecretKey;
+    private  String jwtSecretKey;
 
-    private static SecretKey getSecretKey(){
+    private SecretKey getSecretKey(){
         return Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    public static String generateToken(User user) {
+    public String generateToken(User user) {
         return Jwts.builder()
                 .subject("riderToken")
                 .issuedAt(new java.util.Date())
