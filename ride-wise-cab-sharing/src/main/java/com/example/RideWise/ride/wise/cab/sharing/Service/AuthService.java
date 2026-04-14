@@ -73,8 +73,8 @@ public class AuthService {
             User user = (User) auth.getPrincipal();
             String token = jwtUtil.generateToken(user);
             return new LoginResponseDto(token, user.getId());
-        } catch (BadCredentialsException e) {
-            throw new BadCredentialsException("Invalid email or password");
+        } catch (Exception e) {
+            throw new BadCredentialsException(e.getMessage());
         }
     }
 
