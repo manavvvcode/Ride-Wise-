@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DeletedEntity<T> {
-    private String message;
-    List<T> updatedListOfEntity;
+public class DeletedEntity {
+    private String name;
+    private String email;
 }

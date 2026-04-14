@@ -1,11 +1,15 @@
 package com.example.RideWise.ride.wise.cab.sharing.Service;
 
 import com.example.RideWise.ride.wise.cab.sharing.Dto.DeletedEntity;
+import com.example.RideWise.ride.wise.cab.sharing.Dto.RiderDetailsDto;
 import com.example.RideWise.ride.wise.cab.sharing.Entity.Ride;
 import com.example.RideWise.ride.wise.cab.sharing.Entity.Rider;
+import com.example.RideWise.ride.wise.cab.sharing.Entity.User;
 import com.example.RideWise.ride.wise.cab.sharing.Exceptions.RiderAlreadyExistsException;
 import com.example.RideWise.ride.wise.cab.sharing.Exceptions.RiderNotFoundException;
+import com.example.RideWise.ride.wise.cab.sharing.Repository.RideRepository;
 import com.example.RideWise.ride.wise.cab.sharing.Repository.RiderRepository;
+import com.example.RideWise.ride.wise.cab.sharing.Repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +26,35 @@ public class RiderService {
     @Autowired
     private RiderRepository riderRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private RideRepository rideRepository;
+
     public List<Rider> getAllRiders() {
         return riderRepository.findAll();
     }
 
-    public Rider getRiderById(Long id) throws RiderNotFoundException {
-        return riderRepository.findById(id).orElseThrow(() -> new RiderNotFoundException("Rider with id " + id + " not found."));
+    public RiderDetailsDto getRiderInfo(User customUser) throws RiderNotFoundException {
+        Rider rider = riderRepository.findByUser(customUser);
+        List<Ride> rides = rider.getRides();
+        if (rides.isEmpty()) {
+            return RiderDetailsDto.builder()
+                    .id(rider.getId())
+                    .firstName(rider.getFirstName())
+                    .lastName(rider.getLastName())
+                    .email(customUser.getEmail())
+                    .completedRides(null)
+                    .build();
+        }
+        return RiderDetailsDto.builder()
+                .id(rider.getId())
+                .firstName(rider.getFirstName())
+                .lastName(rider.getLastName())
+                .email(customUser.getEmail())
+                .completedRides(rides)
+                .build();
     }
 
 //    @Transactional
@@ -39,13 +66,8 @@ public class RiderService {
 //    }
 
     @Transactional
-    public DeletedEntity<?> deleteRider(Long id) throws RiderNotFoundException {
-        Optional<Rider> riderOptional = riderRepository.findById(id);
-        if (riderOptional.isEmpty()) {
-            throw new RiderNotFoundException("Rider with id " + id + " not found.");
-        }
-        riderRepository.deleteById(id);
-        List<Rider> updatedRiderList = riderRepository.findAll();
-        return new DeletedEntity<>("rider deleted successfully", updatedRiderList);
+    public String deleteRider(String id) throws RiderNotFoundException {
+        riderRepository.deleteByEmail(id);
+        return "Rider deleted successfully";
     }
 }

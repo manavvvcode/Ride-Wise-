@@ -28,11 +28,35 @@ public class JwtUtil {
 
     public String generateToken(User user) {
         return Jwts.builder()
-                .subject("riderToken")
+                .subject(user.getEmail())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 8 * 60 * 60 * 1000))
                 .claim("roles", "ROLE_" + user.getRole())
                 .signWith(getSecretKey())
                 .compact();
+    }
+
+    public String getEmailFromToken(String token) {
+        return Jwts.parser()
+                .verifyWith(getSecretKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
+    }
+
+    public boolean verifyToken(String token, String email) throws Exception {
+        try {
+            String extractedEmail = getEmailFromToken(token);
+            Date expiryDate = Jwts.parser()
+                    .verifyWith(getSecretKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getExpiration();
+            return (email.equals(extractedEmail) && expiryDate.after(new Date()));
+        } catch (Exception e) {
+            throw new Exception("some error occured while verifyin the token");
+        }
     }
 }

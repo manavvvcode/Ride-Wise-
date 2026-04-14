@@ -2,10 +2,7 @@ package com.example.RideWise.ride.wise.cab.sharing.Configs;
 
 import com.example.RideWise.ride.wise.cab.sharing.Dto.ApiErrorResponse;
 import com.example.RideWise.ride.wise.cab.sharing.Entity.Rider;
-import com.example.RideWise.ride.wise.cab.sharing.Exceptions.DriverAlreadyExistsException;
-import com.example.RideWise.ride.wise.cab.sharing.Exceptions.DriverNotFoundException;
-import com.example.RideWise.ride.wise.cab.sharing.Exceptions.RiderAlreadyExistsException;
-import com.example.RideWise.ride.wise.cab.sharing.Exceptions.RiderNotFoundException;
+import com.example.RideWise.ride.wise.cab.sharing.Exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,10 +18,10 @@ public class HandleAllExceptions {
     public ResponseEntity<ApiErrorResponse> riderNotFound(RiderNotFoundException ex) {
         ApiErrorResponse apiErrorResponse = ApiErrorResponse.builder()
                 .errorMessage(ex.getMessage())
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .status(HttpStatus.NOT_FOUND)
                 .subErrors(null)
                 .build();
-        return new ResponseEntity<>(apiErrorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(apiErrorResponse, apiErrorResponse.getStatus());
     }
 
     @ExceptionHandler(RiderAlreadyExistsException.class)
@@ -34,7 +31,12 @@ public class HandleAllExceptions {
 
     @ExceptionHandler(DriverNotFoundException.class)
     public ResponseEntity<ApiErrorResponse> driverNotFound(DriverNotFoundException ex) {
-        return new ResponseEntity<>(new ApiErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), null), HttpStatus.NOT_FOUND);
+        ApiErrorResponse apiErrorResponse = ApiErrorResponse.builder()
+                .errorMessage(ex.getMessage())
+                .status(HttpStatus.NOT_FOUND)
+                .subErrors(null)
+                .build();
+        return new ResponseEntity<>(apiErrorResponse, apiErrorResponse.getStatus());
     }
 
     @ExceptionHandler(DriverAlreadyExistsException.class)
@@ -45,6 +47,26 @@ public class HandleAllExceptions {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiErrorResponse> badCredentials(BadCredentialsException ex) {
         return new ResponseEntity<>(new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiErrorResponse> generalException(Exception ex) {
+        ApiErrorResponse apiErrorResponse = ApiErrorResponse.builder()
+                .errorMessage("Some unexpected error occurred : " + ex.getMessage())
+                .subErrors(null)
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .build();
+        return new ResponseEntity<>(apiErrorResponse, apiErrorResponse.getStatus());
+    }
+
+    @ExceptionHandler(UserNameNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> userNameNotFoundException(UserNameNotFoundException ex) {
+        ApiErrorResponse apiErrorResponse = ApiErrorResponse.builder()
+                .errorMessage(ex.getMessage())
+                .subErrors(null)
+                .status(HttpStatus.NOT_FOUND)
+                .build();
+        return new ResponseEntity<>(apiErrorResponse, apiErrorResponse.getStatus());
     }
 
 }

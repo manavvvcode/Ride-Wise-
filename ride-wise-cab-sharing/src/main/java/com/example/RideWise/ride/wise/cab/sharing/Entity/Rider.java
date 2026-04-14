@@ -36,4 +36,8 @@ public class Rider {
     @JsonIgnore
     @OneToOne
     private User user;
+
+    @OneToMany(mappedBy = "rider")
+    @JsonIgnore
+    private List<Ride> rides;
 }

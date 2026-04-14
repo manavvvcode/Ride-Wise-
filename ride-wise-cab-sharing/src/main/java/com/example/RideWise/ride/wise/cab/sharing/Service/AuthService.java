@@ -26,6 +26,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -48,7 +49,7 @@ public class AuthService {
         User user = User.builder()
                 .email(rider.getEmail())
                 .password(passwordEncoder.encode(rider.getPassword()))
-                .role(Role.RIDER)
+                .role(List.of(Role.RIDER))
                 .build();
         userRepository.save(user);
 
@@ -78,6 +79,7 @@ public class AuthService {
         }
     }
 
+    @Transactional
     public Driver registerNewDriver(DriverDto driver) throws DriverAlreadyExistsException {
         User userOptional = userRepository.findByEmail(driver.getEmail()).orElse(null);
         if (userOptional != null) {
@@ -86,7 +88,7 @@ public class AuthService {
         User user = User.builder()
                 .email(driver.getEmail())
                 .password(passwordEncoder.encode(driver.getPassword()))
-                .role(Role.DRIVER)
+                .role(List.of(Role.DRIVER))
                 .build();
         userRepository.save(user);
         Driver toBeSavedDriver = Driver.builder()
