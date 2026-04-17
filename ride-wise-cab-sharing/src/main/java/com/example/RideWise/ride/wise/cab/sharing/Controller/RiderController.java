@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,16 +34,18 @@ public class RiderController {
 
     @GetMapping(path = "/me")
     public ResponseEntity<RiderDetailsDto> riderInfo(@AuthenticationPrincipal User customUser) throws RiderNotFoundException {
+        //also a way to fetch current logged-in user but not optimal as
+        //1)makes code tightly coupled with spring security
+        //2)harder to test as you have to mock security context
+
+        //User user = (User) SecurityContextHolder.getContext().getAuthentication();
+
         return ResponseEntity.status(200).body(riderService.getRiderInfo(customUser));
     }
 
-    @DeleteMapping(path = "/{riderEmail}")
-    public ResponseEntity<String> deleteAccount(@PathVariable(value = "riderEmail") String email,
-                                                @AuthenticationPrincipal User customUser) throws RiderNotFoundException {
-        if (!customUser.getEmail().equals(email)) {
-            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-        }
-        return ResponseEntity.status(200).body(riderService.deleteRider(email));
+    @DeleteMapping(path = "/delete")
+    public ResponseEntity<String> deleteAccount(@AuthenticationPrincipal User customUser) throws RiderNotFoundException {
+        return ResponseEntity.status(200).body(riderService.deleteRider(customUser));
     }
 
 }

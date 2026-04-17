@@ -95,7 +95,7 @@ public class AuthService {
                 .FirstName(driver.getFirstName())
                 .LastName(driver.getLastName())
                 .vehicleType(driver.getVehicleType())
-                .isAvailable(driver.isAvailable())
+                .AvailableStatus(driver.isAvailable())
                 .build();
         return driverRepository.save(toBeSavedDriver);
     }

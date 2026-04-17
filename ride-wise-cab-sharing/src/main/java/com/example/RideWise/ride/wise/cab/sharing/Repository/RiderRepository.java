@@ -10,9 +10,11 @@ import java.util.Optional;
 
 @Repository
 public interface RiderRepository extends JpaRepository<Rider,Long> {
-    void deleteByEmail(String id);
+   // void deleteByEmail(String id);
 
     Rider findByUser(User customUser);
+
+    void deleteByEmail(String email);
     //boolean existsByEmail(@Email String email);
 
     //Optional<Rider> findByEmail(String email);

@@ -56,7 +56,7 @@ public class JwtUtil {
                     .getExpiration();
             return (email.equals(extractedEmail) && expiryDate.after(new Date()));
         } catch (Exception e) {
-            throw new Exception("some error occured while verifyin the token");
+            throw new Exception("some error occurred while verifying the token");
         }
     }
 }

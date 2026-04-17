@@ -34,10 +34,10 @@ public class Rider {
     private String lastName;
 
     @JsonIgnore
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private User user;
 
-    @OneToMany(mappedBy = "rider")
+    @OneToMany(mappedBy = "rider", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Ride> rides;
 }

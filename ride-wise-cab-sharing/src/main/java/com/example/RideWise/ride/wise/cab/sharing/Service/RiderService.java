@@ -5,6 +5,7 @@ import com.example.RideWise.ride.wise.cab.sharing.Dto.RiderDetailsDto;
 import com.example.RideWise.ride.wise.cab.sharing.Entity.Ride;
 import com.example.RideWise.ride.wise.cab.sharing.Entity.Rider;
 import com.example.RideWise.ride.wise.cab.sharing.Entity.User;
+import com.example.RideWise.ride.wise.cab.sharing.Exceptions.DriverNotFoundException;
 import com.example.RideWise.ride.wise.cab.sharing.Exceptions.RiderAlreadyExistsException;
 import com.example.RideWise.ride.wise.cab.sharing.Exceptions.RiderNotFoundException;
 import com.example.RideWise.ride.wise.cab.sharing.Repository.RideRepository;
@@ -38,8 +39,7 @@ public class RiderService {
 
     public RiderDetailsDto getRiderInfo(User customUser) throws RiderNotFoundException {
         Rider rider = riderRepository.findByUser(customUser);
-        List<Ride> rides = rider.getRides();
-        if (rides.isEmpty()) {
+        if (rider.getRides().isEmpty()) {
             return RiderDetailsDto.builder()
                     .id(rider.getId())
                     .firstName(rider.getFirstName())
@@ -53,7 +53,7 @@ public class RiderService {
                 .firstName(rider.getFirstName())
                 .lastName(rider.getLastName())
                 .email(customUser.getEmail())
-                .completedRides(rides)
+                .completedRides(rider.getRides())
                 .build();
     }
 
@@ -66,8 +66,13 @@ public class RiderService {
 //    }
 
     @Transactional
-    public String deleteRider(String id) throws RiderNotFoundException {
-        riderRepository.deleteByEmail(id);
-        return "Rider deleted successfully";
+    public String deleteRider(User customUser) throws RiderNotFoundException {
+        try {
+            Rider rider = userRepository.findByUser(customUser);
+            riderRepository.delete(rider);
+            return "Rider deleted successfully";
+        } catch (Exception e) {
+            throw new RiderNotFoundException("Driver not found!");
+        }
     }
 }

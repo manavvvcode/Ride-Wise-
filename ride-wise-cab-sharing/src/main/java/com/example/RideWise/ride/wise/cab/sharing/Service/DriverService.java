@@ -1,8 +1,10 @@
 package com.example.RideWise.ride.wise.cab.sharing.Service;
 
 import com.example.RideWise.ride.wise.cab.sharing.Dto.DeletedEntity;
+import com.example.RideWise.ride.wise.cab.sharing.Dto.DriverDetailsDto;
 import com.example.RideWise.ride.wise.cab.sharing.Entity.Driver;
 import com.example.RideWise.ride.wise.cab.sharing.Entity.Rider;
+import com.example.RideWise.ride.wise.cab.sharing.Entity.User;
 import com.example.RideWise.ride.wise.cab.sharing.Exceptions.DriverAlreadyExistsException;
 import com.example.RideWise.ride.wise.cab.sharing.Exceptions.DriverNotFoundException;
 import com.example.RideWise.ride.wise.cab.sharing.Exceptions.RiderAlreadyExistsException;
@@ -26,8 +28,12 @@ public class DriverService {
         return driverRepository.findAll();
     }
 
-    public Driver getDriverById(Long id) throws DriverNotFoundException {
-        return driverRepository.findById(id).orElseThrow(() -> new DriverNotFoundException("Rider with id " + id + " not found."));
+    public DriverDetailsDto getDriverInfo(User customUser) {
+        Driver driver = driverRepository.findByUser(customUser);
+        if (driver.getRides().isEmpty()) {
+            return DriverDetailsDto.builder().id(driver.getId()).FirstName(driver.getFirstName()).LastName(driver.getLastName()).AvailabilityStatus(driver.isAvailableStatus()).vehicleType(driver.getVehicleType()).totalRidesCompleted(0).rides(driver.getRides()).build();
+        }
+        return DriverDetailsDto.builder().id(driver.getId()).FirstName(driver.getFirstName()).LastName(driver.getLastName()).AvailabilityStatus(driver.isAvailableStatus()).vehicleType(driver.getVehicleType()).totalRidesCompleted(driver.getTotalRidesCompleted()).rides(driver.getRides()).build();
     }
 
 //    @Transactional
@@ -39,14 +45,9 @@ public class DriverService {
 //    }
 
     @Transactional
-    public DeletedEntity<?> deleteDriver(Long id) throws DriverNotFoundException {
-        Optional<Driver> driverOptional = driverRepository.findById(id);
-        if (driverOptional.isEmpty()) {
-            throw new DriverNotFoundException("Driver with id " + id + " not found.");
-        }
-        driverRepository.deleteById(id);
-        List<Driver> updatedDriverList = driverRepository.findAll();
-        //int x = Integer.parseInt("123");
-        return new DeletedEntity<>("Driver deleted successfully", updatedDriverList);
+    public String deleteDriver(User customUser){
+        Driver driver = driverRepository.findByUser(customUser);
+        driverRepository.delete(driver);
+        return "Driver deleted successfully";
     }
 }

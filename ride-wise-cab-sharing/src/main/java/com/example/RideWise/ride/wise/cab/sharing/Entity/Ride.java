@@ -4,6 +4,7 @@ import com.example.RideWise.ride.wise.cab.sharing.Enum.RideStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Ride {
 
     @Id
@@ -45,5 +47,6 @@ public class Ride {
     private RideStatus status;
 
     @OneToOne(mappedBy = "ride", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private FareReceipt fareReceipt;
 }
