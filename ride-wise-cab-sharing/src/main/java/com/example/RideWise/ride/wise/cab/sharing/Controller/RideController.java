@@ -40,7 +40,7 @@ public class RideController {
     }
 
     @PostMapping("/start/{rideId}")
-    public ResponseEntity<String> startRide(@PathVariable Long rideId, @AuthenticationPrincipal User customUser) throws Exception {
+    public ResponseEntity<Ride> startRide(@PathVariable Long rideId, @AuthenticationPrincipal User customUser) throws Exception {
         return ResponseEntity.status(200).body(rideService.startRide(rideId, customUser));
     }
 

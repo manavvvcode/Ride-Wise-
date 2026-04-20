@@ -58,14 +58,15 @@ public class RideService {
         }
     }
 
-    public String startRide(Long rideId, User customUser) throws Exception {
+    @Transactional
+    public Ride startRide(Long rideId, User customUser) throws Exception {
         try {
             List<Ride> rideToCheck = rideRepository.findAllByRiderByUser(customUser);
             Ride ride = rideRepository.findById(rideId).orElseThrow(() -> new Exception("ride not found"));
             if (rideToCheck.contains(ride)) {
                 ride.setStatus(RideStatus.ONGOING);
             }
-            return "Ride has started";
+            return ride;
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

@@ -38,6 +38,7 @@ public class Driver {
     private int totalRidesCompleted = 0;
 
     @OneToOne
+    @MapsId
     private User user;
 
     @Embedded

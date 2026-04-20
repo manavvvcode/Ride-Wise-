@@ -35,6 +35,7 @@ public class Rider {
 
     @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL)
+    @MapsId
     private User user;
 
     @OneToMany(mappedBy = "rider", cascade = CascadeType.ALL)

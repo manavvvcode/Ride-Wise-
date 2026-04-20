@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class HelperMethods {
+
+    //Haversine formula to calculate distance between coordinates
     public static double calculateDistance(Location loc1, Location loc2) {
         final int R = 6371;
         double latDistance = Math.toRadians(loc2.getLatitude() - loc1.getLatitude());
