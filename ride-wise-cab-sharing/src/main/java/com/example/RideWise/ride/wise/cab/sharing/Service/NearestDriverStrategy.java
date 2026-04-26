@@ -14,12 +14,13 @@ import java.util.List;
 public class NearestDriverStrategy implements RideAllocationStrategyInterface {
 
     @Override
-    public Driver assignDriver(List<Driver> driverList, Location pickup,VehicleType type) throws Exception {
+    public Driver assignDriver(List<Driver> driverList, Location pickup, VehicleType type, String email) throws Exception {
         return driverList.stream()
+                .filter(driver -> !driver.getUser().getEmail().equals(email))
                 .filter(Driver::isAvailableStatus)
-                .filter(driver -> driver.getVehicleType()==type)
-                .min(Comparator.comparingDouble(driver->
-                        HelperMethods.calculateDistance(pickup,driver.getCurrentLocation())))
-                .orElseThrow(()->new Exception("could not not assign a driver at this moment!"));
+                .filter(driver -> driver.getVehicleType() == type)
+                .min(Comparator.comparingDouble(driver ->
+                        HelperMethods.calculateDistance(pickup, driver.getCurrentLocation())))
+                .orElseThrow(() -> new Exception("could not not assign a driver at this moment!,try again later"));
     }
 }

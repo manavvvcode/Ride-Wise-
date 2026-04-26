@@ -26,6 +26,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,22 +44,31 @@ public class AuthService {
     @Transactional
     public Rider registerNewRider(RiderDto rider) throws RiderAlreadyExistsException {
         User Optionaluser = userRepository.findByEmail(rider.getEmail()).orElse(null);
-        if (Optionaluser != null) {
+        if (Optionaluser != null && Optionaluser.getRole().contains(Role.RIDER)) {
             throw new RiderAlreadyExistsException("you already have an existing account with email " + rider.getEmail() + " Kindly login using your registered email");
+        } else if (Optionaluser != null) {
+            Optionaluser.getRole().add(Role.RIDER);
+            userRepository.save(Optionaluser);
+            Rider toBeSavedRider = Rider.builder()
+                    .user(Optionaluser)
+                    .firstName(rider.getFirstName())
+                    .lastName(rider.getLastName())
+                    .build();
+            return riderRepository.save(toBeSavedRider);
+        } else {
+            User user = User.builder()
+                    .email(rider.getEmail())
+                    .password(passwordEncoder.encode(rider.getPassword()))
+                    .role(new ArrayList<>(List.of(Role.RIDER)))
+                    .build();
+            userRepository.save(user);
+            Rider toBeSavedRider = Rider.builder()
+                    .user(user)
+                    .firstName(rider.getFirstName())
+                    .lastName(rider.getLastName())
+                    .build();
+            return riderRepository.save(toBeSavedRider);
         }
-        User user = User.builder()
-                .email(rider.getEmail())
-                .password(passwordEncoder.encode(rider.getPassword()))
-                .role(List.of(Role.RIDER))
-                .build();
-        userRepository.save(user);
-
-        Rider toBeSavedRider = Rider.builder()
-                .user(user)
-                .firstName(rider.getFirstName())
-                .lastName(rider.getLastName())
-                .build();
-        return riderRepository.save(toBeSavedRider);
     }
 
 
@@ -81,22 +91,35 @@ public class AuthService {
 
     @Transactional
     public Driver registerNewDriver(DriverDto driver) throws DriverAlreadyExistsException {
-        User userOptional = userRepository.findByEmail(driver.getEmail()).orElse(null);
-        if (userOptional != null) {
-            throw new DriverAlreadyExistsException("you already have an existing account with gmail " + driver.getEmail());
+        User Optionaluser = userRepository.findByEmail(driver.getEmail()).orElse(null);
+        if (Optionaluser != null && Optionaluser.getRole().contains(Role.DRIVER)) {
+            throw new DriverAlreadyExistsException("you already have an existing account with email " + driver.getEmail() + " Kindly login using your registered email");
+        } else if (Optionaluser != null) {
+            Optionaluser.getRole().add(Role.DRIVER);
+            userRepository.save(Optionaluser);
+            Driver toBeSavedDriver = Driver.builder()
+                    .user(Optionaluser)
+                    .FirstName(driver.getFirstName())
+                    .LastName(driver.getLastName())
+                    .AvailableStatus(driver.isAvailable())
+                    .vehicleType(driver.getVehicleType())
+                    .build();
+            return driverRepository.save(toBeSavedDriver);
+        } else {
+            User user = User.builder()
+                    .email(driver.getEmail())
+                    .password(passwordEncoder.encode(driver.getPassword()))
+                    .role(new ArrayList<>(List.of(Role.DRIVER)))
+                    .build();
+            userRepository.save(user);
+            Driver toBeSavedDriver = Driver.builder()
+                    .user(user)
+                    .FirstName(driver.getFirstName())
+                    .LastName(driver.getLastName())
+                    .AvailableStatus(driver.isAvailable())
+                    .vehicleType(driver.getVehicleType())
+                    .build();
+            return driverRepository.save(toBeSavedDriver);
         }
-        User user = User.builder()
-                .email(driver.getEmail())
-                .password(passwordEncoder.encode(driver.getPassword()))
-                .role(List.of(Role.DRIVER))
-                .build();
-        userRepository.save(user);
-        Driver toBeSavedDriver = Driver.builder()
-                .FirstName(driver.getFirstName())
-                .LastName(driver.getLastName())
-                .vehicleType(driver.getVehicleType())
-                .AvailableStatus(driver.isAvailable())
-                .build();
-        return driverRepository.save(toBeSavedDriver);
     }
 }

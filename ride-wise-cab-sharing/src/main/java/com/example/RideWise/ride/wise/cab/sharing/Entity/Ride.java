@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -19,10 +21,10 @@ public class Ride {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Driver driver;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Rider rider;
 
     @Embedded
@@ -49,4 +51,16 @@ public class Ride {
     @OneToOne(mappedBy = "ride", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private FareReceipt fareReceipt;
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Ride ride = (Ride) o;
+        return Objects.equals(id, ride.id) && Objects.equals(driver, ride.driver) && Objects.equals(rider, ride.rider) && Objects.equals(pickupLocation, ride.pickupLocation) && Objects.equals(destinationLocation, ride.destinationLocation) && Objects.equals(distance, ride.distance) && Objects.equals(fare, ride.fare) && status == ride.status && Objects.equals(fareReceipt, ride.fareReceipt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, driver, rider, pickupLocation, destinationLocation, distance, fare, status, fareReceipt);
+    }
 }

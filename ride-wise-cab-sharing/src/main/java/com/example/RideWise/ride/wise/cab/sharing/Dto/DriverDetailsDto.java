@@ -21,4 +21,5 @@ public class DriverDetailsDto {
     private VehicleType vehicleType;
     private int totalRidesCompleted;
     private List<Ride> rides;
+    private Integer memberSince;
 }

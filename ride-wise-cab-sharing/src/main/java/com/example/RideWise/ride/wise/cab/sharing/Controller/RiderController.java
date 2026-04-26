@@ -8,6 +8,7 @@ import com.example.RideWise.ride.wise.cab.sharing.Exceptions.RiderAlreadyExistsE
 import com.example.RideWise.ride.wise.cab.sharing.Exceptions.RiderNotFoundException;
 import com.example.RideWise.ride.wise.cab.sharing.Security.CustomUserDetailsService;
 import com.example.RideWise.ride.wise.cab.sharing.Service.RiderService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,24 +23,13 @@ import java.util.List;
 //@PreAuthorize("hasRole('RIDER')")
 @RestController
 @RequestMapping(path = "/rider")
+@RequiredArgsConstructor
 public class RiderController {
 
-    @Autowired
-    private RiderService riderService;
-
-//    @GetMapping
-//    public ResponseEntity<List<Rider>> getALlRiders() {
-//        return ResponseEntity.status(200).body(riderService.getAllRiders());
-//    }
+    private final RiderService riderService;
 
     @GetMapping(path = "/me")
     public ResponseEntity<RiderDetailsDto> riderInfo(@AuthenticationPrincipal User customUser) throws RiderNotFoundException {
-        //also a way to fetch current logged-in user but not optimal as
-        //1)makes code tightly coupled with spring security
-        //2)harder to test as you have to mock security context
-
-        //User user = (User) SecurityContextHolder.getContext().getAuthentication();
-
         return ResponseEntity.status(200).body(riderService.getRiderInfo(customUser));
     }
 

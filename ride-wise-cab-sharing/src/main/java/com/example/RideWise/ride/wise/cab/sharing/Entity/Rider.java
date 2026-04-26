@@ -8,11 +8,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -41,4 +43,7 @@ public class Rider {
     @OneToMany(mappedBy = "rider", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Ride> rides;
+
+    @CreationTimestamp
+    private LocalDateTime memberSince;
 }

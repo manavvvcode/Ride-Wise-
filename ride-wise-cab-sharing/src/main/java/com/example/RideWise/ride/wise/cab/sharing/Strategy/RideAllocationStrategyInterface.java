@@ -9,5 +9,5 @@ import java.util.List;
 
 
 public interface RideAllocationStrategyInterface {
-    Driver assignDriver(List<Driver> driverList, Location pickup, VehicleType type) throws Exception;
+    Driver assignDriver(List<Driver> driverList, Location pickup, VehicleType type,String email) throws Exception;
 }

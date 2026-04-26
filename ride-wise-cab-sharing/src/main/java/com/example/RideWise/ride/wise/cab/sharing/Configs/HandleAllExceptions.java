@@ -9,6 +9,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RestControllerAdvice
@@ -63,6 +64,16 @@ public class HandleAllExceptions {
     public ResponseEntity<ApiErrorResponse> userNameNotFoundException(UserNameNotFoundException ex) {
         ApiErrorResponse apiErrorResponse = ApiErrorResponse.builder()
                 .errorMessage(ex.getMessage())
+                .subErrors(null)
+                .status(HttpStatus.NOT_FOUND)
+                .build();
+        return new ResponseEntity<>(apiErrorResponse, apiErrorResponse.getStatus());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiErrorResponse> accessDeniedException(AccessDeniedException ex) {
+        ApiErrorResponse apiErrorResponse = ApiErrorResponse.builder()
+                .errorMessage("you do not have enough rights to access this resource")
                 .subErrors(null)
                 .status(HttpStatus.NOT_FOUND)
                 .build();

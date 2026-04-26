@@ -11,11 +11,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface RideRepository extends JpaRepository<Ride,Long> {
+public interface RideRepository extends JpaRepository<Ride, Long> {
     Optional<Ride> findByRider(Rider rider);
 
     Ride findByRiderByUser(User customUser);
 
-    List<Ride> findAllByRiderByUser(User customUser);
+    Optional<List<Ride>> findAllByRiderByUser(User customUser);
+
+    Optional<Ride> findByIdAndRider_User(Long rideId, User customUser);
     //boolean existsByEmail(@Email String email);
 }

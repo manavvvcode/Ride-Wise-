@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface RiderRepository extends JpaRepository<Rider,Long> {
    // void deleteByEmail(String id);
 
-    Rider findByUser(User customUser);
+    Optional<Rider> findByUser(User customUser);
 
     void deleteByEmail(String email);
     //boolean existsByEmail(@Email String email);

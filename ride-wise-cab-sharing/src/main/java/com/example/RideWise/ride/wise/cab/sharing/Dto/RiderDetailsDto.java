@@ -18,4 +18,5 @@ public class RiderDetailsDto {
     private String lastName;
     private String email;
     private List<Ride> completedRides;
+    private Integer memberSince;
 }

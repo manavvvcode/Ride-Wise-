@@ -8,8 +8,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.processing.Pattern;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -51,4 +53,7 @@ public class Driver {
     @OneToMany(mappedBy = "rider", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Ride> rides;
+
+    @CreationTimestamp
+    private LocalDateTime memberSince;
 }
