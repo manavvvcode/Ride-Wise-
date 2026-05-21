@@ -1,19 +1,16 @@
 package com.example.RideWise.ride.wise.cab.sharing.Service;
 
+import com.example.RideWise.ride.wise.cab.sharing.Dto.FareReceiptDto;
 import com.example.RideWise.ride.wise.cab.sharing.Dto.RequestRideDto;
 import com.example.RideWise.ride.wise.cab.sharing.Dto.RideDetailsDto;
-import com.example.RideWise.ride.wise.cab.sharing.Entity.Driver;
-import com.example.RideWise.ride.wise.cab.sharing.Entity.Ride;
-import com.example.RideWise.ride.wise.cab.sharing.Entity.Rider;
-import com.example.RideWise.ride.wise.cab.sharing.Entity.User;
+import com.example.RideWise.ride.wise.cab.sharing.Entity.*;
 import com.example.RideWise.ride.wise.cab.sharing.Enum.RideStatus;
 import com.example.RideWise.ride.wise.cab.sharing.Enum.VehicleType;
+import com.example.RideWise.ride.wise.cab.sharing.Exceptions.AlreadyOngoingRideException;
+import com.example.RideWise.ride.wise.cab.sharing.Exceptions.InsufficientFundsException;
 import com.example.RideWise.ride.wise.cab.sharing.Exceptions.RiderNotFoundException;
 import com.example.RideWise.ride.wise.cab.sharing.HelperMethods;
-import com.example.RideWise.ride.wise.cab.sharing.Repository.DriverRepository;
-import com.example.RideWise.ride.wise.cab.sharing.Repository.RideRepository;
-import com.example.RideWise.ride.wise.cab.sharing.Repository.RiderRepository;
-import com.example.RideWise.ride.wise.cab.sharing.Repository.UserRepository;
+import com.example.RideWise.ride.wise.cab.sharing.Repository.*;
 import com.example.RideWise.ride.wise.cab.sharing.Strategy.FareCalculationStrategy;
 import com.example.RideWise.ride.wise.cab.sharing.Strategy.RideAllocationStrategyInterface;
 import jakarta.transaction.Transactional;
@@ -22,6 +19,7 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,10 +33,16 @@ public class RideService {
     private final DriverRepository driverRepository;
     private final RiderRepository riderRepository;
     private final StrategySelector strategySelector;
+    private final FareReceiptRepository fareReceiptRepository;
 
     @Transactional
-    public RideDetailsDto requestNewRide(RequestRideDto ride, User customUser) throws Exception {
+    public RideDetailsDto requestNewRide(RequestRideDto ride, User customUser) throws Exception, AlreadyOngoingRideException {
         Rider rider = riderRepository.findByUser(customUser).orElseThrow(() -> new RiderNotFoundException("rider with email " + customUser.getEmail() + " not found"));
+        for (Ride x : rider.getRides()) {
+            if (x.getStatus().equals(RideStatus.ONGOING)) {
+                throw new AlreadyOngoingRideException("cant book a new ride at this moment! Finish your ride with " + x.getDriver().getFirstName() + " to destination " + x.getDestinationLocation() + " first!");
+            }
+        }
         List<Driver> driverList = driverRepository.findAll();
         RideAllocationStrategyInterface rideStrategy = strategySelector.getDriverStrategy(driverList);
         FareCalculationStrategy fareStrategy = strategySelector.getFareStrategy();
@@ -72,6 +76,10 @@ public class RideService {
                 .orElseThrow(() -> new Exception("Ride not found or does not belong to this user"));
         if (ride.getStatus() != RideStatus.ASSIGNED) {
             throw new Exception("Ride cannot be started, current status: " + ride.getStatus());
+        }
+        Double walletBalance = customUser.getUserWallet().getBalance();
+        if (ride.getFare() > walletBalance) {
+            throw new InsufficientFundsException("you dont have sufficient credits to start this ride!. your current balance is " + walletBalance + " . required credit for this ride is " + ride.getFare() + ". Add more credits now to continue this ride!");
         }
         ride.setStatus(RideStatus.ONGOING);
         rideRepository.save(ride);
@@ -107,6 +115,32 @@ public class RideService {
                 .pickup(ride.getPickupLocation())
                 .drop(ride.getDestinationLocation())
                 .distance(ride.getDistance())
+                .build();
+    }
+
+    @Transactional
+    public FareReceiptDto endRide(Long rideId, User customUser) throws Exception {
+        Ride ride = rideRepository.findByIdAndRider_User(rideId, customUser)
+                .orElseThrow(() -> new RiderNotFoundException("Ride not found or does not belong to this user"));
+        if (ride.getStatus() != RideStatus.ONGOING) {
+            throw new Exception("Ride cannot be ended now. current ride status is : " + ride.getStatus());
+        }
+        ride.setStatus(RideStatus.COMPLETED);
+        ride.getDriver().setAvailableStatus(true);
+        ride.getDriver().setTotalRidesCompleted(ride.getDriver().getTotalRidesCompleted() + 1);
+        FareReceipt fareReceipt = FareReceipt.builder()
+                .createdAt(LocalDateTime.now())
+                .amount(ride.getFare())
+                .ride(ride)
+                .build();
+        fareReceiptRepository.save(fareReceipt);
+        return FareReceiptDto.builder()
+                .id(fareReceipt.getId())
+                .amount(fareReceipt.getAmount())
+                .createdAt(fareReceipt.getCreatedAt())
+                .driverName(ride.getDriver().getFirstName())
+                .pickupLocation(ride.getPickupLocation())
+                .destinationLocation(ride.getDestinationLocation())
                 .build();
     }
 

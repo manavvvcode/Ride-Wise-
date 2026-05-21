@@ -38,4 +38,9 @@ public class RiderController {
         return ResponseEntity.status(200).body(riderService.deleteRider(customUser));
     }
 
+    @PostMapping(path = "/wallet/add")
+    public ResponseEntity<RiderDetailsDto> addMoneyToWallet(@AuthenticationPrincipal User customUser,@RequestBody Double amount) throws Exception {
+        return ResponseEntity.status(200).body(riderService.addMoneyToWallet(customUser,amount));
+    }
+
 }

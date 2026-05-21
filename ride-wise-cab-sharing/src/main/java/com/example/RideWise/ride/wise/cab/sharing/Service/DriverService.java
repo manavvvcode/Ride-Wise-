@@ -34,6 +34,7 @@ public class DriverService {
     @Transactional
     public DriverDetailsDto getDriverInfo(User customUser) throws DriverNotFoundException {
         Driver driver = driverRepository.findByUser(customUser).orElseThrow(() -> new DriverNotFoundException("driver with email " + customUser.getEmail() + " not found!"));
+        Double walletBalance = customUser.getUserWallet().getBalance();
         if (driver.getRides().isEmpty()) {
             return DriverDetailsDto
                     .builder()
@@ -45,9 +46,10 @@ public class DriverService {
                     .totalRidesCompleted(0)
                     .rides(null)
                     .memberSince(driver.getMemberSince().getYear())
+                    .walletBalance(walletBalance)
                     .build();
         }
-        return DriverDetailsDto.builder().id(driver.getId()).FirstName(driver.getFirstName()).LastName(driver.getLastName()).AvailabilityStatus(driver.isAvailableStatus()).vehicleType(driver.getVehicleType()).totalRidesCompleted(driver.getTotalRidesCompleted()).rides(driver.getRides()).memberSince(driver.getMemberSince().getYear()).build();
+        return DriverDetailsDto.builder().id(driver.getId()).FirstName(driver.getFirstName()).LastName(driver.getLastName()).AvailabilityStatus(driver.isAvailableStatus()).vehicleType(driver.getVehicleType()).totalRidesCompleted(driver.getTotalRidesCompleted()).rides(driver.getRides()).memberSince(driver.getMemberSince().getYear()).walletBalance(walletBalance).build();
 
     }
 

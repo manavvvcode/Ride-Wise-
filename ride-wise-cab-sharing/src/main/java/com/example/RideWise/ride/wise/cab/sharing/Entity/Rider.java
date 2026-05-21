@@ -44,6 +44,8 @@ public class Rider {
     @JsonIgnore
     private List<Ride> rides;
 
+    private Double walletBalance;
+
     @CreationTimestamp
     private LocalDateTime memberSince;
 }

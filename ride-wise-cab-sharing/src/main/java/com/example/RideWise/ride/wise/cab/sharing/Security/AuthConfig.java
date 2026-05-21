@@ -41,8 +41,8 @@ public class AuthConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/rider").hasRole(Role.DRIVER.name())
-                        .requestMatchers("/driver").hasRole(Role.RIDER.name())
+                        .requestMatchers("/rider").hasRole(Role.RIDER.name())
+                        .requestMatchers("/driver").hasRole(Role.DRIVER.name())
                         .anyRequest().authenticated())
                 .userDetailsService(customUserDetailsService)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

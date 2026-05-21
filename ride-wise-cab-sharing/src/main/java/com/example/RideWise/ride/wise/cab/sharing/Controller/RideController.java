@@ -1,11 +1,14 @@
 package com.example.RideWise.ride.wise.cab.sharing.Controller;
 
 import com.example.RideWise.ride.wise.cab.sharing.Dto.DeletedEntity;
+import com.example.RideWise.ride.wise.cab.sharing.Dto.FareReceiptDto;
 import com.example.RideWise.ride.wise.cab.sharing.Dto.RequestRideDto;
 import com.example.RideWise.ride.wise.cab.sharing.Dto.RideDetailsDto;
+import com.example.RideWise.ride.wise.cab.sharing.Entity.FareReceipt;
 import com.example.RideWise.ride.wise.cab.sharing.Entity.Ride;
 import com.example.RideWise.ride.wise.cab.sharing.Entity.Rider;
 import com.example.RideWise.ride.wise.cab.sharing.Entity.User;
+import com.example.RideWise.ride.wise.cab.sharing.Exceptions.AlreadyOngoingRideException;
 import com.example.RideWise.ride.wise.cab.sharing.Exceptions.RiderAlreadyExistsException;
 import com.example.RideWise.ride.wise.cab.sharing.Exceptions.RiderNotFoundException;
 import com.example.RideWise.ride.wise.cab.sharing.Service.RideService;
@@ -31,19 +34,26 @@ public class RideController {
 
     @PreAuthorize("hasRole('RIDER')")
     @PostMapping("/request")
-    public ResponseEntity<RideDetailsDto> requestNewRide(@RequestBody RequestRideDto ride, @AuthenticationPrincipal User customUser) throws Exception {
+    public ResponseEntity<RideDetailsDto> requestNewRide(@RequestBody RequestRideDto ride, @AuthenticationPrincipal User customUser) throws Exception, AlreadyOngoingRideException {
         return ResponseEntity.status(200).body(rideService.requestNewRide(ride, customUser));
     }
 
-
+    @PreAuthorize("hasRole('DRIVER')")
     @PostMapping("/start/{rideId}")
     public ResponseEntity<RideDetailsDto> startRide(@PathVariable Long rideId, @AuthenticationPrincipal User customUser) throws Exception {
         return ResponseEntity.status(200).body(rideService.startRide(rideId, customUser));
     }
 
+    @PreAuthorize("hasAnyRole('DRIVER','RIDER')")
     @PostMapping("/cancel/{rideId}")
     public ResponseEntity<RideDetailsDto> cancelRide(@PathVariable Long rideId, @AuthenticationPrincipal User customUser) throws Exception {
         return ResponseEntity.status(200).body(rideService.cancelRide(rideId, customUser));
+    }
+
+    @PreAuthorize("hasRole('DRIVER')")
+    @PostMapping("/end/{rideId}")
+    public ResponseEntity<FareReceiptDto> endRide(@PathVariable Long rideId, @AuthenticationPrincipal User customUser) throws Exception {
+        return ResponseEntity.status(200).body(rideService.endRide(rideId, customUser));
     }
 
 

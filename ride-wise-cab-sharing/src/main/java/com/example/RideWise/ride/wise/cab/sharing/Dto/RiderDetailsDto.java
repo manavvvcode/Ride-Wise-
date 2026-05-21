@@ -19,4 +19,5 @@ public class RiderDetailsDto {
     private String email;
     private List<Ride> completedRides;
     private Integer memberSince;
+    private Double walletBalance;
 }

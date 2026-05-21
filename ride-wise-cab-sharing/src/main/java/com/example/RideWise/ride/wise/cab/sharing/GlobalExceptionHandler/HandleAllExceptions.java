@@ -1,7 +1,6 @@
-package com.example.RideWise.ride.wise.cab.sharing.Configs;
+package com.example.RideWise.ride.wise.cab.sharing.GlobalExceptionHandler;
 
 import com.example.RideWise.ride.wise.cab.sharing.Dto.ApiErrorResponse;
-import com.example.RideWise.ride.wise.cab.sharing.Entity.Rider;
 import com.example.RideWise.ride.wise.cab.sharing.Exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.nio.file.AccessDeniedException;
-import java.util.List;
 
 @RestControllerAdvice
 public class HandleAllExceptions {

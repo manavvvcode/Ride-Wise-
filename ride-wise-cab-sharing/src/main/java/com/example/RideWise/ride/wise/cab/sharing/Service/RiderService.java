@@ -33,8 +33,8 @@ public class RiderService {
     @Autowired
     private UserRepository userRepository;
 
-   // @Autowired
-   // private RideRepository rideRepository;
+    // @Autowired
+    // private RideRepository rideRepository;
 
     public List<Rider> getAllRiders() {
         return riderRepository.findAll();
@@ -42,6 +42,7 @@ public class RiderService {
 
     public RiderDetailsDto getRiderInfo(User customUser) throws RiderNotFoundException {
         Rider rider = riderRepository.findByUser(customUser).orElseThrow(() -> new RiderNotFoundException("rider with email " + customUser.getEmail() + " not found"));
+        Double walletBalance = customUser.getUserWallet().getBalance();
         if (rider.getRides().isEmpty()) {
             return RiderDetailsDto.builder()
                     .id(rider.getId())
@@ -50,6 +51,7 @@ public class RiderService {
                     .email(customUser.getEmail())
                     .completedRides(null)
                     .memberSince(rider.getMemberSince().getYear())
+                    .walletBalance(walletBalance)
                     .build();
         }
         return RiderDetailsDto.builder()
@@ -59,6 +61,7 @@ public class RiderService {
                 .email(customUser.getEmail())
                 .completedRides(rider.getRides())
                 .memberSince(rider.getMemberSince().getYear())
+                .walletBalance(walletBalance)
                 .build();
     }
 
@@ -75,5 +78,23 @@ public class RiderService {
         userRepository.delete(user);
         riderRepository.delete(rider);
         return "Rider deleted successfully!";
+    }
+
+    @Transactional
+    public RiderDetailsDto addMoneyToWallet(User customUser, Double amount) throws Exception {
+        Rider rider = riderRepository.findByUser(customUser).orElseThrow(() -> new RiderNotFoundException("rider with email " + customUser.getEmail() + " not found"));
+        if (amount <= 0) {
+            throw new Exception("You cant add " + amount + " credits to your wallet!");
+        }
+        rider.setWalletBalance(rider.getWalletBalance() + amount);
+        return RiderDetailsDto.builder()
+                .id(rider.getId())
+                .firstName(rider.getFirstName())
+                .lastName(rider.getLastName())
+                .email(customUser.getEmail())
+                .completedRides(rider.getRides())
+                .memberSince(rider.getMemberSince().getYear())
+                .walletBalance(rider.getWalletBalance())
+                .build();
     }
 }

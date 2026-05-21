@@ -22,4 +22,5 @@ public class DriverDetailsDto {
     private int totalRidesCompleted;
     private List<Ride> rides;
     private Integer memberSince;
+    private Double walletBalance;
 }

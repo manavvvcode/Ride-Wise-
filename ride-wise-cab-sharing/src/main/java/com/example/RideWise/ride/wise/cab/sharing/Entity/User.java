@@ -33,6 +33,9 @@ public class User implements UserDetails {
 
     private String password;
 
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+    private Wallet userWallet;
+
     @Enumerated(EnumType.STRING)
     private List<Role> role = new ArrayList<>();
 

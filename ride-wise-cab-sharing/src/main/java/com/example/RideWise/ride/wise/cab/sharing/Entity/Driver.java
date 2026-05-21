@@ -56,4 +56,6 @@ public class Driver {
 
     @CreationTimestamp
     private LocalDateTime memberSince;
+
+    private Double walletBalance;
 }
